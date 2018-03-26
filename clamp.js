@@ -2,7 +2,7 @@ import Vue from 'vue';
 class Clamp {
     constructor (opt) {
         this.supportsNativeClamp = typeof (document.documentElement.style.webkitLineClamp) !== 'undefined';
-        this.className = 'clamp-' + Math.random().toString(36).substr(2);
+        this.className = '_line_clamp_custom_directive';
         this.el = opt.el;
         this.clamp = parseInt(opt.clamp) || 2;
         this.init();
@@ -56,22 +56,26 @@ class Clamp {
      * 动态添加class
      */
     addStyle () {
-        const sty = document.createElement('style');
-        sty.type = 'text/css';
-        const str = `.${this.className} {
-            position: relative;
-            overflow: hidden;
+        const hasStyle = !!document.getElementById('lineClampCustomDirective');
+        if (!hasStyle) {
+            const sty = document.createElement('style');
+            sty.type = 'text/css';
+            sty.id = 'lineClampCustomDirective';
+            const str = `.${this.className} {
+                position: relative;
+                overflow: hidden;
+            }
+            .${this.className}::after {
+                content: "..."; position: absolute; bottom: 0; right: 0; padding-left: 40px;
+                background: -webkit-linear-gradient(left, transparent, #fff 55%);
+                background: -o-linear-gradient(right, transparent, #fff 55%);
+                background: -moz-linear-gradient(right, transparent, #fff 55%);
+                background: linear-gradient(to right, transparent, #fff 55%);
+            }`;
+            // ie use styleSheet.csstext
+            sty.styleSheet ? sty.styleSheet.cssText = str : sty.innerHTML = str;
+            document.getElementsByTagName('head')[0].appendChild(sty);
         }
-        .${this.className}::after {
-            content: "..."; position: absolute; bottom: 0; right: 0; padding-left: 40px;
-            background: -webkit-linear-gradient(left, transparent, #fff 55%);
-            background: -o-linear-gradient(right, transparent, #fff 55%);
-            background: -moz-linear-gradient(right, transparent, #fff 55%);
-            background: linear-gradient(to right, transparent, #fff 55%);
-        }`;
-        // ie use styleSheet.csstext
-        sty.styleSheet ? sty.styleSheet.cssText = str : sty.innerHTML = str;
-        document.getElementsByTagName('head')[0].appendChild(sty);
     }
     getMaxHeight () {
         const lineHeight = this.getLineHeight(this.el);
