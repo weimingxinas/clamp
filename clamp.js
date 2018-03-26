@@ -19,7 +19,7 @@ class Clamp {
             window.getComputedStyle = function (el, pseudo) {
                 this.el = el;
                 this.getPropertyValue = function (prop) {
-                    var re = /(-([a-z]){1})/g;
+                    const re = /(-([a-z]){1})/g;
                     if (prop === 'float') prop = 'styleFloat';
                     if (re.test(prop)) {
                         prop = prop.replace(re, function () {
@@ -40,7 +40,7 @@ class Clamp {
      * @returns {number}
      */
     getLineHeight (elem) {
-        var lh = this.computeStyle(elem, 'line-height');
+        let lh = this.computeStyle(elem, 'line-height');
         if (lh === 'normal') {
             // Normal line heights vary from browser to browser. The spec recommends
             // a value between 1.0 and 1.2 of the font size. Using 1.1 to split the diff.
@@ -83,7 +83,7 @@ class Clamp {
      */
     init () {
         const sty = this.el.style;
-        if (!this.supportsNativeClamp) {
+        if (this.supportsNativeClamp) {
             sty.overflow = 'hidden';
             sty.textOverflow = 'ellipsis';
             sty.webkitBoxOrient = 'vertical';
@@ -99,7 +99,6 @@ class Clamp {
                 newEl.style.height = height + 'px';
                 this.el.parentNode.replaceChild(newEl, this.el);
                 newEl.appendChild(this.el);
-                console.log(height, newEl.style);
             }
         }
     }
